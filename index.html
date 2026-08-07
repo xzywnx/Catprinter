@@ -16,7 +16,7 @@
       </div>
     </header>
 
-    <!-- MODE STRUK / RESEP -->
+    <!-- RECEIPT MODE -->
     <section id="receiptSection" class="card">
       <h2>DATA RESEP / STRUK</h2>
       <div class="form-group">
@@ -24,9 +24,10 @@
         <input type="text" id="storeName" value="123 MAIN STREET, CITY, STATE 12345">
       </div>
       <div class="form-group">
-        <label>No. Telepon</label>
+        <label>Phone</label>
         <input type="text" id="storePhone" value="(555) 123-4567">
       </div>
+      
       <div class="form-row">
         <div class="form-group">
           <label>Table</label>
@@ -41,6 +42,7 @@
           <input type="text" id="receiptOrder" value="1234">
         </div>
       </div>
+
       <div class="form-row">
         <div class="form-group">
           <label>Tax %</label>
@@ -51,42 +53,101 @@
           <input type="text" id="receiptDate">
         </div>
       </div>
+
+      <!-- ADD ITEM FORM -->
       <div class="form-group">
-        <label>Items (Format: Nama : Harga)</label>
-        <textarea id="receiptItems" rows="3">Kopi Susu : 18000
-Roti Bakar : 15000</textarea>
+        <label>Items</label>
+        <div class="item-input-row">
+          <input type="text" id="itemNameInput" placeholder="Item name">
+          <input type="number" id="itemPriceInput" placeholder="0.00" step="100">
+          <button id="btnAddItem" class="btn-blue-sm">Add</button>
+        </div>
+        <ul id="itemListUI" class="item-list"></ul>
       </div>
+
+      <!-- PAYMENT -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Tip</label>
+          <input type="number" id="receiptTip" value="0.00">
+        </div>
+        <div class="form-group">
+          <label>Method</label>
+          <select id="paymentMethod">
+            <option value="Credit Card">Credit Card</option>
+            <option value="Cash">Cash</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Paid</label>
+          <input type="number" id="receiptPaid" value="0.00">
+        </div>
+        <div class="form-group">
+          <label>Change</label>
+          <input type="text" id="receiptChange" value="0.00" readonly>
+        </div>
+      </div>
+
       <div class="form-group">
-        <label>Footer Text</label>
-        <textarea id="footerText" rows="2">THANK YOU FOR DINING WITH US</textarea>
+        <label>Footer</label>
+        <textarea id="footerText" rows="2">THANK YOU FOR DINING WITH US
+WWW.MYRESTAURANT.COM</textarea>
       </div>
+
+      <button id="btnResetReceipt" class="btn-gray">Reset Form</button>
     </section>
 
-    <!-- MODE GAMBAR -->
+    <!-- IMAGE MODE -->
     <section id="imageSection" class="card hidden">
-      <h2>UNGGAH GAMBAR</h2>
+      <h2>IMAGE SOURCE & PROCESSING</h2>
       <div class="form-group">
-        <label>Pilih Gambar</label>
+        <label>Upload Image</label>
         <input type="file" id="imageInput" accept="image/*">
       </div>
+      
+      <div class="form-group">
+        <label>Dithering Method</label>
+        <select id="ditherMethod">
+          <option value="floyd">Floyd-Steinberg</option>
+          <option value="threshold">Threshold</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Threshold: <span id="thresholdVal">128</span></label>
+        <input type="range" id="thresholdSlider" min="0" max="255" value="128">
+      </div>
+
+      <div class="form-group checkbox-group">
+        <input type="checkbox" id="invertCheckbox">
+        <label for="invertCheckbox">Invert Image</label>
+      </div>
     </section>
 
-    <!-- TOMBOL AKSI -->
+    <!-- ACTION BUTTONS -->
     <div class="action-buttons">
-      <button id="btnConnect" class="btn-blue">Connect Bluetooth</button>
+      <button id="btnConnect" class="btn-blue">Reconnect / Connect BLE</button>
       <button id="btnPrint" class="btn-red">Print Now</button>
     </div>
 
-    <!-- PREVIEW DAN LOG -->
+    <!-- PREVIEW -->
     <section class="card">
       <h2>PRINT PREVIEW</h2>
       <div class="canvas-container">
         <canvas id="printCanvas" width="384" height="100"></canvas>
       </div>
+      <div id="previewMetrics" class="metrics-panel"></div>
     </section>
 
+    <!-- LOG -->
     <section class="card">
-      <h2>PRINTER LOG</h2>
+      <div class="log-header">
+        <h2>PRINTER LOG</h2>
+        <span id="batteryStatus" class="battery-label">🔋 --%</span>
+      </div>
       <pre id="logArea">Status: Ready to connect</pre>
     </section>
   </div>
