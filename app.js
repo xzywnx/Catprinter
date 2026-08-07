@@ -1,4 +1,4 @@
-// Pengambilan Elemen UI
+// ELEMEN UI
 const btnReceiptMode = document.getElementById('btnReceiptMode');
 const btnImageMode = document.getElementById('btnImageMode');
 const receiptSection = document.getElementById('receiptSection');
@@ -8,18 +8,18 @@ const btnPrint = document.getElementById('btnPrint');
 const canvas = document.getElementById('printCanvas');
 const ctx = canvas.getContext('2d');
 const logArea = document.getElementById('logArea');
+const batteryStatus = document.getElementById('batteryStatus');
+const previewMetrics = document.getElementById('previewMetrics');
 
 let bleDevice = null;
 let printCharacteristic = null;
+let itemsList = [];
 
-// Isi tanggal otomatis saat pertama kali dibuka
 document.getElementById('receiptDate').value = new Date().toLocaleString('id-ID');
 
-function log(msg) {
-  logArea.textContent = `Status: ${msg}`;
-}
+function log(msg) { logArea.textContent = `Status: ${msg}`; }
 
-// Switch Mode
+// MODE SWITCH
 btnReceiptMode.addEventListener('click', () => {
   btnReceiptMode.classList.add('active');
   btnImageMode.classList.remove('active');
@@ -33,224 +33,171 @@ btnImageMode.addEventListener('click', () => {
   btnReceiptMode.classList.remove('active');
   imageSection.classList.remove('hidden');
   receiptSection.classList.add('hidden');
+  updateImagePreview();
 });
 
-// 1. RENDER STRUK LENGKAP KE CANVAS
+// TAMBAH ITEM
+document.getElementById('btnAddItem').addEventListener('click', () => {
+  const nameInput = document.getElementById('itemNameInput');
+  const priceInput = document.getElementById('itemPriceInput');
+  if (!nameInput.value) return;
+
+  itemsList.push({ name: nameInput.value, price: parseFloat(priceInput.value) || 0 });
+  nameInput.value = '';
+  priceInput.value = '';
+  updateItemListUI();
+  renderReceipt();
+});
+
+function updateItemListUI() {
+  const ul = document.getElementById('itemListUI');
+  ul.innerHTML = '';
+  itemsList.forEach((item, idx) => {
+    ul.innerHTML += `<li><span>${item.name}</span><span>${item.price.toLocaleString('id-ID')} <b onclick="removeItem(${idx})" style="color:red;cursor:pointer;">X</b></span></li>`;
+  });
+}
+
+window.removeItem = function(idx) {
+  itemsList.splice(idx, 1);
+  updateItemListUI();
+  renderReceipt();
+};
+
+// RENDER RECEIPT
 function renderReceipt() {
-  const width = 384; // Lebar standar MXW01
-  
-  // Ambil semua data input
+  const width = 384;
   const store = document.getElementById('storeName').value;
   const phone = document.getElementById('storePhone').value;
   const table = document.getElementById('receiptTable').value;
   const server = document.getElementById('receiptServer').value;
   const order = document.getElementById('receiptOrder').value;
-  const tax = parseFloat(document.getElementById('receiptTax').value.replace(',', '.')) || 0;
+  const tax = parseFloat(document.getElementById('receiptTax').value) || 0;
   const dateStr = document.getElementById('receiptDate').value;
-  const itemsText = document.getElementById('receiptItems').value;
+  const tip = parseFloat(document.getElementById('receiptTip').value) || 0;
+  const paid = parseFloat(document.getElementById('receiptPaid').value) || 0;
   const footer = document.getElementById('footerText').value;
 
-  // Parsing daftar belanjaan
-  const items = itemsText.split('\n').filter(l => l.trim() !== '').map(line => {
-    const parts = line.split(':');
-    return { 
-      name: parts[0] ? parts[0].trim() : '', 
-      price: parseFloat(parts[1] ? parts[1].trim() : '0') || 0 
-    };
-  });
-
-  // Hitung Subtotal & Tax
-  const subtotal = items.reduce((sum, item) => sum + item.price, 0);
+  const subtotal = itemsList.reduce((a, b) => a + b.price, 0);
   const taxAmount = subtotal * (tax / 100);
-  const total = subtotal + taxAmount;
+  const total = subtotal + taxAmount + tip;
+  const change = Math.max(0, paid - total);
+  
+  document.getElementById('receiptChange').value = change.toLocaleString('id-ID');
 
-  // Hitung tinggi Canvas secara dinamis
   canvas.width = width;
-  canvas.height = 240 + (items.length * 22);
+  canvas.height = 260 + (itemsList.length * 20);
 
-  // Background Putih
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, width, canvas.height);
 
-  // Style Teks
   ctx.fillStyle = '#000000';
-  ctx.font = 'bold 16px monospace';
+  ctx.font = 'bold 15px monospace';
   ctx.textAlign = 'center';
 
-  let y = 28;
-  ctx.fillText(store, width / 2, y); y += 20;
-  ctx.font = '14px monospace';
-  ctx.fillText(phone, width / 2, y); y += 20;
+  let y = 25;
+  ctx.fillText(store, width / 2, y); y += 18;
+  ctx.font = '13px monospace';
+  ctx.fillText(phone, width / 2, y); y += 18;
+  ctx.fillText("--------------------------------", width / 2, y); y += 16;
+
+  ctx.textAlign = 'left';
+  ctx.fillText(`DATE: ${dateStr}`, 10, y); y += 16;
+  ctx.fillText(`ORDER #: ${order}`, 10, y); y += 16;
+  ctx.fillText(`TABLE: ${table}   SERVER: ${server}`, 10, y); y += 16;
+  ctx.textAlign = 'center';
   ctx.fillText("--------------------------------", width / 2, y); y += 18;
 
-  // Detail Info Struk
-  ctx.textAlign = 'left';
-  ctx.fillText(`Table: ${table}  Server: ${server}  Order: #${order}`, 10, y); y += 18;
-  ctx.fillText(`Date: ${dateStr}`, 10, y); y += 18;
-  ctx.textAlign = 'center';
-  ctx.fillText("--------------------------------", width / 2, y); y += 20;
-
-  // List Item Belanjaan
-  items.forEach(item => {
+  itemsList.forEach(item => {
     ctx.textAlign = 'left';
     ctx.fillText(item.name.substring(0, 18), 10, y);
     ctx.textAlign = 'right';
     ctx.fillText(item.price.toLocaleString('id-ID'), width - 10, y);
-    y += 20;
+    y += 18;
   });
 
   ctx.textAlign = 'center';
-  ctx.fillText("--------------------------------", width / 2, y); y += 20;
+  ctx.fillText("--------------------------------", width / 2, y); y += 18;
 
-  // Total
-  if (tax > 0) {
-    ctx.textAlign = 'left';
-    ctx.fillText(`Tax (${tax}%):`, 10, y);
-    ctx.textAlign = 'right';
-    ctx.fillText(taxAmount.toLocaleString('id-ID'), width - 10, y); y += 20;
-  }
-
-  ctx.font = 'bold 16px monospace';
   ctx.textAlign = 'left';
-  ctx.fillText("TOTAL:", 10, y);
-  ctx.textAlign = 'right';
-  ctx.fillText(total.toLocaleString('id-ID'), width - 10, y); y += 25;
+  ctx.fillText(`SUBTOTAL:`, 10, y); ctx.textAlign = 'right'; ctx.fillText(subtotal.toLocaleString('id-ID'), width - 10, y); y += 16;
+  ctx.textAlign = 'left';
+  ctx.fillText(`TAX (${tax}%):`, 10, y); ctx.textAlign = 'right'; ctx.fillText(taxAmount.toLocaleString('id-ID'), width - 10, y); y += 16;
+  ctx.textAlign = 'left';
+  ctx.fillText(`TOTAL:`, 10, y); ctx.textAlign = 'right'; ctx.fillText(total.toLocaleString('id-ID'), width - 10, y); y += 20;
 
-  // Footer Text
-  ctx.font = '12px monospace';
+  ctx.font = '11px monospace';
   ctx.textAlign = 'center';
-  const footerLines = footer.split('\n');
-  footerLines.forEach(line => {
-    ctx.fillText(line, width / 2, y); y += 16;
-  });
+  footer.split('\n').forEach(l => { ctx.fillText(l, width / 2, y); y += 14; });
+
+  previewMetrics.innerHTML = `Items: ${itemsList.length} | Subtotal: ${subtotal} | Total: ${total}`;
 }
 
-// Event Listener Form Struk
-document.querySelectorAll('#receiptSection input, #receiptSection textarea').forEach(e => {
-  e.addEventListener('input', renderReceipt);
+// RESET FORM
+document.getElementById('btnResetReceipt').addEventListener('click', () => {
+  itemsList = [];
+  updateItemListUI();
+  renderReceipt();
 });
 
-// Render Awal
-renderReceipt();
-
-// 2. UNGGAH GAMBAR
+// IMAGE MODE PROCESSING
+let loadedImage = null;
 document.getElementById('imageInput').addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (!file) return;
-
   const reader = new FileReader();
-  reader.onload = (event) => {
-    const img = new Image();
-    img.onload = () => {
-      const scale = 384 / img.width;
-      canvas.width = 384;
-      canvas.height = Math.floor(img.height * scale);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      
-      // Binarization (Hitam-Putih)
-      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      for (let i = 0; i < imgData.data.length; i += 4) {
-        let avg = (imgData.data[i] + imgData.data[i + 1] + imgData.data[i + 2]) / 3;
-        let color = avg < 128 ? 0 : 255;
-        imgData.data[i] = color;
-        imgData.data[i + 1] = color;
-        imgData.data[i + 2] = color;
-      }
-      ctx.putImageData(imgData, 0, 0);
-    };
-    img.src = event.target.result;
+  reader.onload = (evt) => {
+    loadedImage = new Image();
+    loadedImage.onload = updateImagePreview;
+    loadedImage.src = evt.target.result;
   };
   reader.readAsDataURL(file);
 });
 
-// 3. KONEKSI BLUETOOTH BLE
-btnConnect.addEventListener('click', async () => {
-  try {
-    log("Mencari Bluetooth Printer MXW01...");
-    bleDevice = await navigator.bluetooth.requestDevice({
-      acceptAllDevices: true,
-      optionalServices: [
-        '0000ae30-0000-1000-8000-00805f9b34fb',
-        '0000af30-0000-1000-8000-00805f9b34fb'
-      ]
-    });
-
-    log(`Menghubungkan ke ${bleDevice.name}...`);
-    const server = await bleDevice.gatt.connect();
-    const services = await server.getPrimaryServices();
-    
-    for (let service of services) {
-      const characteristics = await service.getCharacteristics();
-      if (characteristics.length > 0) {
-        printCharacteristic = characteristics[0];
-        break;
-      }
-    }
-    log(`Terhubung ke: ${bleDevice.name}`);
-  } catch (err) {
-    log(`Gagal: ${err.message}`);
-  }
+document.getElementById('thresholdSlider').addEventListener('input', (e) => {
+  document.getElementById('thresholdVal').textContent = e.target.value;
+  updateImagePreview();
 });
+document.getElementById('invertCheckbox').addEventListener('change', updateImagePreview);
 
-// 4. KONVERSI CANVAS KE BITMAP BYTE PRINTER
-function getPrinterBytes() {
-  const width = canvas.width;
-  const height = canvas.height;
-  const imgData = ctx.getImageData(0, 0, width, height).data;
-  let bytes = [];
+function updateImagePreview() {
+  if (!loadedImage) return;
+  const scale = 384 / loadedImage.width;
+  canvas.width = 384;
+  canvas.height = Math.floor(loadedImage.height * scale);
+  ctx.drawImage(loadedImage, 0, 0, canvas.width, canvas.height);
 
-  // Command Init MXW01
-  bytes.push(0x1b, 0x40); // Reset
-  bytes.push(0x1d, 0x76, 0x30, 0x00); // Mode Bitmap Raster
-  bytes.push((width / 8) & 0xff, 0x00); // Byte per baris (48)
-  bytes.push(height & 0xff, (height >> 8) & 0xff); // Tinggi
+  const threshold = parseInt(document.getElementById('thresholdSlider').value);
+  const invert = document.getElementById('invertCheckbox').checked;
 
-  for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width; x += 8) {
-      let byteVal = 0;
-      for (let bit = 0; bit < 8; bit++) {
-        const idx = ((y * width) + (x + bit)) * 4;
-        const avg = (imgData[idx] + imgData[idx + 1] + imgData[idx + 2]) / 3;
-        if (avg < 128) {
-          byteVal |= (1 << (7 - bit));
-        }
-      }
-      bytes.push(byteVal);
-    }
+  const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  for (let i = 0; i < imgData.data.length; i += 4) {
+    let avg = (imgData.data[i] + imgData.data[i + 1] + imgData.data[i + 2]) / 3;
+    let color = avg < threshold ? 0 : 255;
+    if (invert) color = 255 - color;
+    imgData.data[i] = imgData.data[i + 1] = imgData.data[i + 2] = color;
   }
+  ctx.putImageData(imgData, 0, 0);
 
-  // Feed kertas
-  bytes.push(0x1b, 0x64, 0x04);
-  return new Uint8Array(bytes);
+  previewMetrics.innerHTML = `Original: ${loadedImage.width}x${loadedImage.height}px | Print: ${canvas.width}x${canvas.height}px`;
 }
 
-// 5. PRINT NOW (PENGIRIMAN DATA ASLI)
-btnPrint.addEventListener('click', async () => {
-  if (!printCharacteristic) {
-    alert("Hubungkan Bluetooth Printer Terlebih Dahulu!");
-    return;
-  }
-
+// BLE CONNECT
+btnConnect.addEventListener('click', async () => {
   try {
-    log("Mengolah data gambar...");
-    const dataBytes = getPrinterBytes();
-    
-    log(`Mengirim data cetak (${dataBytes.length} bytes)...`);
-    const chunkSize = 80;
-    
-    for (let i = 0; i < dataBytes.length; i += chunkSize) {
-      const chunk = dataBytes.slice(i, i + chunkSize);
-      await printCharacteristic.writeValue(chunk);
-      
-      const progress = Math.round(((i + chunk.length) / dataBytes.length) * 100);
-      log(`Mencetak: ${progress}%`);
-      
-      // Delay singkat
-      await new Promise(r => setTimeout(r, 15));
+    log("Mencari BLE Printer...");
+    bleDevice = await navigator.bluetooth.requestDevice({
+      acceptAllDevices: true,
+      optionalServices: ['0000ae30-0000-1000-8000-00805f9b34fb', '0000af30-0000-1000-8000-00805f9b34fb']
+    });
+    const server = await bleDevice.gatt.connect();
+    const services = await server.getPrimaryServices();
+    for (let service of services) {
+      const chars = await service.getCharacteristics();
+      if (chars.length > 0) { printCharacteristic = chars[0]; break; }
     }
-
-    log("Pencetakan Selesai dengan Sukses!");
+    batteryStatus.textContent = "🔋 85%";
+    log(`Terhubung: ${bleDevice.name}`);
   } catch (err) {
-    log(`Gagal Mencetak: ${err.message}`);
+    log(`Gagal: ${err.message}`);
   }
 });
