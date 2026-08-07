@@ -1,112 +1,42 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-}
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+body { background-color: #121212; color: #e0e0e0; padding: 12px; }
+.container { max-width: 480px; margin: 0 auto; }
 
-body {
-  background-color: #121212;
-  color: #e0e0e0;
-  padding: 15px;
-}
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+h1 { font-size: 1.1rem; }
+.mode-switch { display: flex; gap: 4px; }
+.btn-mode { background: #333; color: #888; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
+.btn-mode.active { background: #d32f2f; color: #fff; font-weight: bold; }
 
-.container {
-  max-width: 480px;
-  margin: 0 auto;
-}
+.card { background: #1e1e1e; border: 1px solid #333; border-radius: 6px; padding: 12px; margin-bottom: 12px; }
+h2 { color: #d32f2f; font-size: 0.8rem; margin-bottom: 8px; }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-}
-
-h1 { font-size: 1.2rem; }
-
-.mode-switch { display: flex; gap: 5px; }
-
-.btn-mode {
-  background-color: #333;
-  color: #888;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.btn-mode.active {
-  background-color: #d32f2f;
-  color: #fff;
-  font-weight: bold;
-}
-
-.card {
-  background-color: #1e1e1e;
-  border: 1px solid #333;
-  border-radius: 6px;
-  padding: 15px;
-  margin-bottom: 15px;
-}
-
-h2 {
-  color: #d32f2f;
-  font-size: 0.85rem;
-  margin-bottom: 10px;
-}
-
-.form-group { margin-bottom: 10px; }
-.form-row { display: flex; gap: 8px; }
+.form-group { margin-bottom: 8px; }
+.form-row { display: flex; gap: 6px; }
 .form-row .form-group { flex: 1; }
 
-label {
-  display: block;
-  font-size: 0.75rem;
-  color: #aaa;
-  margin-bottom: 3px;
-}
+label { display: block; font-size: 0.7rem; color: #aaa; margin-bottom: 2px; }
+input, select, textarea { width: 100%; padding: 6px 8px; background: #2a2a2a; border: 1px solid #444; color: #fff; border-radius: 4px; font-size: 0.85rem; }
 
-input, textarea {
-  width: 100%;
-  padding: 8px;
-  background-color: #2a2a2a;
-  border: 1px solid #444;
-  color: #fff;
-  border-radius: 4px;
-}
+.item-input-row { display: flex; gap: 4px; }
+.btn-blue-sm { background: #1976d2; color: #fff; border: none; padding: 0 12px; border-radius: 4px; cursor: pointer; }
+.item-list { list-style: none; margin-top: 6px; }
+.item-list li { display: flex; justify-content: space-between; background: #252525; padding: 4px 8px; font-size: 0.8rem; margin-bottom: 2px; border-radius: 3px; }
 
-.action-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 15px;
-}
+.checkbox-group { display: flex; align-items: center; gap: 6px; }
+.checkbox-group input { width: auto; }
 
-button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
-  cursor: pointer;
-}
+.action-buttons { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+button { width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-blue { background: #1976d2; color: #fff; }
+.btn-red { background: #d32f2f; color: #fff; }
+.btn-gray { background: #444; color: #ccc; margin-top: 8px; }
 
-.btn-blue { background-color: #1976d2; color: #fff; }
-.btn-red { background-color: #d32f2f; color: #fff; }
-
-.canvas-container {
-  background-color: #fff;
-  padding: 10px;
-  display: flex;
-  justify-content: center;
-}
-
+.canvas-container { background: #fff; padding: 8px; display: flex; justify-content: center; }
 #printCanvas { display: block; }
 
-pre {
-  color: #00ff66;
-  font-size: 0.8rem;
-}
-
+.metrics-panel { font-family: monospace; font-size: 0.75rem; color: #aaa; margin-top: 8px; border-top: 1px solid #333; padding-top: 6px; }
+.log-header { display: flex; justify-content: space-between; align-items: center; }
+.battery-label { color: #00ff66; font-size: 0.8rem; font-family: monospace; }
+pre { color: #00ff66; font-size: 0.75rem; white-space: pre-wrap; margin-top: 4px; }
 .hidden { display: none; }
