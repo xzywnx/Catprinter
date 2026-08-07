@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MXW01 Tools - Cat Printer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>MXW01 Tools</h1>
+      <div class="mode-switch">
+        <button id="btnReceiptMode" class="btn-mode active">Receipt Mode</button>
+        <button id="btnImageMode" class="btn-mode">Image Mode</button>
+      </div>
+    </header>
+
+    <!-- MODE STRUK / RESEP -->
+    <section id="receiptSection" class="card">
+      <h2>DATA RESEP / STRUK</h2>
+      <div class="form-group">
+        <label>Header / Nama Toko</label>
+        <input type="text" id="storeName" value="123 MAIN STREET, CITY, STATE 12345">
+      </div>
+      <div class="form-group">
+        <label>No. Telepon</label>
+        <input type="text" id="storePhone" value="(555) 123-4567">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Table</label>
+          <input type="text" id="receiptTable" value="12">
+        </div>
+        <div class="form-group">
+          <label>Server</label>
+          <input type="text" id="receiptServer" value="ALICE">
+        </div>
+        <div class="form-group">
+          <label># Order</label>
+          <input type="text" id="receiptOrder" value="1234">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Tax %</label>
+          <input type="number" id="receiptTax" value="8.25" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Date/Time</label>
+          <input type="text" id="receiptDate">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Items (Format: Nama : Harga)</label>
+        <textarea id="receiptItems" rows="3">Kopi Susu : 18000
+Roti Bakar : 15000</textarea>
+      </div>
+      <div class="form-group">
+        <label>Footer Text</label>
+        <textarea id="footerText" rows="2">THANK YOU FOR DINING WITH US</textarea>
+      </div>
+    </section>
+
+    <!-- MODE GAMBAR -->
+    <section id="imageSection" class="card hidden">
+      <h2>UNGGAH GAMBAR</h2>
+      <div class="form-group">
+        <label>Pilih Gambar</label>
+        <input type="file" id="imageInput" accept="image/*">
+      </div>
+    </section>
+
+    <!-- TOMBOL AKSI -->
+    <div class="action-buttons">
+      <button id="btnConnect" class="btn-blue">Connect Bluetooth</button>
+      <button id="btnPrint" class="btn-red">Print Now</button>
+    </div>
+
+    <!-- PREVIEW DAN LOG -->
+    <section class="card">
+      <h2>PRINT PREVIEW</h2>
+      <div class="canvas-container">
+        <canvas id="printCanvas" width="384" height="100"></canvas>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>PRINTER LOG</h2>
+      <pre id="logArea">Status: Ready to connect</pre>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
