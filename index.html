@@ -16,7 +16,7 @@
       </div>
     </header>
 
-    <!-- RECEIPT MODE -->
+    <!-- FORM STRUK -->
     <section id="receiptSection" class="card">
       <h2>DATA RESEP / STRUK</h2>
       <div class="form-group">
@@ -54,18 +54,17 @@
         </div>
       </div>
 
-      <!-- ADD ITEM FORM -->
+      <!-- INPUT ITEM BELANJAAN -->
       <div class="form-group">
-        <label>Items</label>
+        <label>Daftar Belanjaan (Items)</label>
         <div class="item-input-row">
-          <input type="text" id="itemNameInput" placeholder="Item name">
-          <input type="number" id="itemPriceInput" placeholder="0.00" step="100">
-          <button id="btnAddItem" class="btn-blue-sm">Add</button>
+          <input type="text" id="itemNameInput" placeholder="Nama Item">
+          <input type="number" id="itemPriceInput" placeholder="Harga">
+          <button type="button" id="btnAddItem" class="btn-blue-sm">Add</button>
         </div>
         <ul id="itemListUI" class="item-list"></ul>
       </div>
 
-      <!-- PAYMENT -->
       <div class="form-row">
         <div class="form-group">
           <label>Tip</label>
@@ -76,6 +75,7 @@
           <select id="paymentMethod">
             <option value="Credit Card">Credit Card</option>
             <option value="Cash">Cash</option>
+            <option value="QRIS">QRIS</option>
           </select>
         </div>
       </div>
@@ -92,15 +92,15 @@
       </div>
 
       <div class="form-group">
-        <label>Footer</label>
+        <label>Footer Text</label>
         <textarea id="footerText" rows="2">THANK YOU FOR DINING WITH US
 WWW.MYRESTAURANT.COM</textarea>
       </div>
 
-      <button id="btnResetReceipt" class="btn-gray">Reset Form</button>
+      <button type="button" id="btnResetReceipt" class="btn-gray">Reset Form</button>
     </section>
 
-    <!-- IMAGE MODE -->
+    <!-- FORM GAMBAR -->
     <section id="imageSection" class="card hidden">
       <h2>IMAGE SOURCE & PROCESSING</h2>
       <div class="form-group">
@@ -127,10 +127,10 @@ WWW.MYRESTAURANT.COM</textarea>
       </div>
     </section>
 
-    <!-- ACTION BUTTONS -->
+    <!-- TOMBOL AKSI -->
     <div class="action-buttons">
-      <button id="btnConnect" class="btn-blue">Reconnect / Connect BLE</button>
-      <button id="btnPrint" class="btn-red">Print Now</button>
+      <button type="button" id="btnConnect" class="btn-blue">Reconnect / Connect BLE</button>
+      <button type="button" id="btnPrint" class="btn-red">Print Now</button>
     </div>
 
     <!-- PREVIEW -->
@@ -139,10 +139,10 @@ WWW.MYRESTAURANT.COM</textarea>
       <div class="canvas-container">
         <canvas id="printCanvas" width="384" height="100"></canvas>
       </div>
-      <div id="previewMetrics" class="metrics-panel"></div>
+      <div id="previewMetrics" class="metrics-panel">Items: 0 | Total: 0</div>
     </section>
 
-    <!-- LOG -->
+    <!-- PRINTER LOG -->
     <section class="card">
       <div class="log-header">
         <h2>PRINTER LOG</h2>
